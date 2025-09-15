@@ -2,15 +2,17 @@ CREATE DATABASE gestao_escola;
 
 USE gestao_escola;
 
-CREATE TABLE aluno (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nome VARCHAR(255) NOT NULL
-);
-
 CREATE TABLE turma (
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	descricao VARCHAR(10) NOT NULL,
-    periodo BIT NOT NULL -- matutino = 0 | vespertino = 1
+    periodo ENUM('Matutino','Vespertino') NOT NULL
+);
+
+CREATE TABLE aluno (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	nome VARCHAR(255) NOT NULL,
+    turma_id INT NOT NULL,
+    FOREIGN KEY (turma_id) REFERENCES turma(id)
 );
 
 CREATE TABLE professor (
@@ -53,29 +55,22 @@ CREATE TABLE grade (
     FOREIGN KEY (dia_semana_id) REFERENCES dia_semana(id)
 );
 
-CREATE TABLE matricula (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	aluno_id INT NOT NULL,
-	FOREIGN KEY (aluno_id) REFERENCES aluno(id),
-	grade_id INT NOT NULL,
-	FOREIGN KEY (grade_id) REFERENCES grade(id)
-);
-
 CREATE TABLE presenca (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     aluno_id INT NOT NULL,
     FOREIGN KEY (aluno_id) REFERENCES aluno(id),
     calendario_id INT NOT NULL,
     FOREIGN KEY (calendario_id) REFERENCES calendario(id),
-    presenca BIT NOT NULL -- falta = 0 | presente = 1
+    presenca ENUM('Presente','Falta') NOT NULL
 );
 
-CREATE TABLE notas (
-id INT PRIMARY KEY AUTO_INCREMENT,
-aluno_id INT NOT NULL,
-FOREIGN KEY (aluno_id) REFERENCES aluno(id),
-grade_id INT NOT NULL,
-FOREIGN KEY (grade_id) REFERENCES grade(id),
-avaliacao_id INT NOT NULL,
-FOREIGN KEY (avaliacao_id) REFERENCES avaliacao(id)
+CREATE TABLE nota (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	aluno_id INT NOT NULL,
+	FOREIGN KEY (aluno_id) REFERENCES aluno(id),
+	disciplina_id INT NOT NULL,
+	FOREIGN KEY (disciplina_id) REFERENCES disciplina(id),
+	avaliacao_id INT NOT NULL,
+	FOREIGN KEY (avaliacao_id) REFERENCES avaliacao(id),
+	nota DECIMAL(5,2) NOT NULL
 );
